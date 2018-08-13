@@ -53,7 +53,8 @@ if opt.backend ~= 'nn' then
     gpus = torch.range(1,cutorch.getDeviceCount()):totable()
     dataParallelContainer = nn.DataParallelTable(1):add(model,gpus):cuda()
     cudnn.convert(dataParallelContainer, cudnn) --Convert the net to cudnn
-    net = dataParallelContainer
+    if net~= dataParallelContainer then dataParallelContainer:copy(net) end
+        collectgarbage()
     criterion = criterion:cuda()
 end
 
