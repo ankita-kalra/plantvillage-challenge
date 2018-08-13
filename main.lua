@@ -25,7 +25,7 @@ local opt = cmd:parse(arg or {}) -- Table containing all these options
 
 
 -----------[[Model and criterion here]]---------------
-local net
+local net; local gpus; local dataParallelContainer;
 if opt.retrain ~= 'none' then
     assert(paths.filep(opt.retrain), 'File not found: ' .. opt.retrain)
     print('Loading model from file: ' .. opt.retrain);
@@ -48,11 +48,12 @@ end
 local criterion = nn.ClassNLLCriterion()
 
 if opt.backend ~= 'nn' then
-    require 'cunn'; require 'cudnn'
-    cudnn.fastest = true; cudnn.benchmark = true
-
-    net = net:cuda()
-    cudnn.convert(net, cudnn) --Convert the net to cudnn
+    require 'cunn'; require 'cudnn'; require 'cutorch'
+    cudnn.fastest = true; cudnn.benchmark = true    
+    gpus = torch.range(1,cutorch.getDeviceCount()):totable()
+    dataParallelContainer = nn.DataParallelTable(1):add(model,gpus):cuda()
+    cudnn.convert(dataParallelContainer, cudnn) --Convert the net to cudnn
+    net = dataParallelContainer
     criterion = criterion:cuda()
 end
 

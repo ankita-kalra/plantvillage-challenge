@@ -81,11 +81,14 @@ function Trainer:runEpoch(tag)
         self.model:training() -- i.e, switch dropout and otherlayers to training mode.
         iterator = self.dataGen:trainGenerator(self.batchSize)
         maxSamples = self.dataGen.nbTrainExamples
+        collectgarbage()
     else
         print('==> Validating')
         self.model:evaluate()  -- i.e, switch dropout and otherlayers to evaluate/determinstic mode.
         iterator = self.dataGen:valGenerator(self.batchSize)
         maxSamples = self.dataGen.nbValExamples
+        if x ~= parameters then parameters:copy(x) end
+        collectgarbage()
     end
     
 

@@ -52,8 +52,20 @@ end
 -- Load the model
 local model = torch.load(arg[1])
 
--- Evaluate mode
-model:evaluate()
+-- function to Test Current Model on Test Data
+function test()
+    confusion:zero()
+    model:evaluate()
+    for input, target in dataGen:valGenerator(batchSize) do
+        -- Forward pass
+        output = model:forward(input)
+        confusion:batchAdd(output, target)
+    end
+    
+    confusion:updateValids()
+    testAcc = self.confusion.totalValid*100
+    print('Test Accuracy = ' .. testAcc)
+end
 
 -- Ten Crops
 local t = require 'datasets/transforms'
