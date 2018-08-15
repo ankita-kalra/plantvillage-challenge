@@ -12,6 +12,7 @@ luac.out
 *.ko
 *.obj
 *.elf
+*.t7
 
 # Precompiled Headers
 *.gch
@@ -38,4 +39,16 @@ luac.out
 *.i*86
 *.x86_64
 *.hex
+
+
+#Datasets and models - A.K.
+datasets/pv_data
+datasets/brt_data
+datasets/union_data
+models/
+resnet/
+vgg/
+alex/
+
+
 
